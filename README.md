@@ -1,4 +1,4 @@
-Seacrh with various algorithms
+Search with various algorithms
 
 Sebuah program berupa kolom pencarian menggunakan berbagai algorithms berbasis html dan css
 
