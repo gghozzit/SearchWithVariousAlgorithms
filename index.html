@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tahu Search</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Tahu Search</h1>
+    <h2>With Various Algorithms</h2>
+    <form id="searchForm">
+      <input type="text" id="keyword" name="keyword" placeholder="Enter Keyword" />
+      <select id="algorithm">
+        <option value="vector-space">Vector Space Model</option>
+        <option value="cosine-similarity">Cosine Similarity</option>
+        <option value="naive-bayes">Naive Bayes</option>
+        <option value="extended-boolean">Extended Boolean</option>
+        <option value="knn">K-Nearest Neighbors (KNN)</option>
+      </select>
+      <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+      document.getElementById('searchForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const keyword = document.getElementById('keyword').value.toLowerCase();
+        const algorithm = document.getElementById('algorithm').value;
+        performSearch(keyword, algorithm);
+      });
+
+      const documents = [
+        'The quick brown fox jumps over the lazy dog',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        'Vector Space Model is a type of Information Retrieval Model',
+        'Machine learning and natural language processing are interesting fields',
+        'Artificial intelligence is transforming the world',
+        'The history of natural language processing is fascinating',
+        'Deep learning algorithms are very powerful',
+        'Data science involves statistics, programming, and domain knowledge',
+        'Python is a popular language for machine learning',
+        'The field of information retrieval is crucial for search engines',
+        'Big data technologies enable the processing of large datasets',
+        'The Internet of Things (IoT) is connecting devices worldwide',
+        'Blockchain technology provides a secure way of handling transactions',
+        'Quantum computing promises to solve complex problems faster',
+        'Augmented reality enhances our perception of the real world',
+        'Cybersecurity is essential for protecting information systems',
+        'Cloud computing offers scalable resources and storage solutions',
+        'Genetic algorithms are used for optimization problems',
+        "Neural networks mimic the human brain's structure and function",
+        'Support vector machines are effective for classification tasks',
+        'Reinforcement learning is a type of machine learning where agents learn by interacting with their environment',
+        'Natural language generation creates human-like text from data',
+        'Computer vision allows machines to interpret visual information',
+        'Speech recognition technology converts spoken language into text',
+        'Recommendation systems suggest products or content based on user preferences',
+        'Edge computing processes data closer to the source of generation',
+        '5G technology will significantly increase internet speeds',
+        'Virtual reality creates immersive experiences through simulated environments',
+        'Digital twins are virtual replicas of physical entities',
+        'Autonomous vehicles are self-driving cars that use sensors and AI',
+        'Robotic process automation automates repetitive tasks',
+
+        'Hujan turun dengan deras di sore hari',
+        'Anak-anak bermain di taman dengan riang',
+        'Pendidikan merupakan kunci untuk masa depan yang lebih baik',
+        'Kesehatan adalah aset berharga yang harus dijaga',
+        'Makanan yang sehat sangat penting untuk menjaga keseimbangan tubuh',
+        'Keluarga adalah tempat di mana cinta tanpa batas bermula',
+        'Senyum adalah bahasa universal yang bisa dimengerti semua orang',
+        'Kegiatan olahraga membantu menjaga kebugaran fisik dan mental',
+        'Kebersihan adalah sebagian dari iman',
+        'Pendidikan karakter merupakan pondasi bagi pembangunan bangsa',
+        'Kesederhanaan adalah kunci dari kebahagiaan sejati',
+        'Kebersamaan dalam keluarga menguatkan ikatan batin',
+        'Alam menyediakan keindahan yang tiada tara',
+        'Pariwisata berkelanjutan adalah tanggung jawab bersama',
+        'Teknologi informasi membawa kemajuan yang pesat dalam berbagai bidang',
+        'Kewirausahaan merupakan motor penggerak perekonomian',
+        'Musik adalah bahasa yang bisa menyatukan berbagai budaya',
+        'Kerja keras dan ketekunan merupakan kunci kesuksesan',
+        'Kehidupan harus diisi dengan nilai-nilai positif',
+        'Cinta dan kasih sayang adalah pendorong utama dalam hidup',
+      ];
+
+      function performSearch(keyword, algorithm) {
+        const results = [];
+        const keywordTerms = keyword.split(' ');
+
+        documents.forEach((doc, index) => {
+          const docTerms = doc.toLowerCase().split(' ');
+          let score = 0;
+
+          if (algorithm === 'vector-space') {
+            keywordTerms.forEach((term) => {
+              if (docTerms.includes(term)) {
+                score++;
+              }
+            });
+          } else if (algorithm === 'cosine-similarity') {
+            score = cosineSimilarity(keywordTerms, docTerms);
+          } else if (algorithm === 'naive-bayes') {
+            score = naiveBayes(keywordTerms, docTerms);
+          } else if (algorithm === 'extended-boolean') {
+            score = extendedBoolean(keywordTerms, docTerms);
+          } else if (algorithm === 'knn') {
+            score = knn(keywordTerms, docTerms);
+          }
+
+          if (score > 0) {
+            results.push({ doc, score });
+          }
+        });
+
+        results.sort((a, b) => b.score - a.score);
+
+        displayResults(results);
+      }
+
+      function displayResults(results) {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        if (results.length === 0) {
+          resultsDiv.innerHTML = '<p>No results found</p>';
+          return;
+        }
+
+        results.forEach((result) => {
+          const resultItem = document.createElement('div');
+          resultItem.innerHTML = `<p>${result.doc} (Score: ${result.score})</p>`;
+          resultsDiv.appendChild(resultItem);
+        });
+      }
+
+      function cosineSimilarity(queryTerms, docTerms) {
+        const queryVector = createTermFrequencyVector(queryTerms);
+        const docVector = createTermFrequencyVector(docTerms);
+        const dotProduct = dotProductVectors(queryVector, docVector);
+        const magnitudeQuery = vectorMagnitude(queryVector);
+        const magnitudeDoc = vectorMagnitude(docVector);
+        return dotProduct / (magnitudeQuery * magnitudeDoc);
+      }
+
+      function naiveBayes(queryTerms, docTerms) {
+        let score = 1;
+        queryTerms.forEach((term) => {
+          const termFrequency = docTerms.filter((docTerm) => docTerm === term).length;
+          score *= termFrequency / docTerms.length;
+        });
+        return score;
+      }
+
+      function extendedBoolean(queryTerms, docTerms) {
+        let score = 0;
+        queryTerms.forEach((term) => {
+          if (docTerms.includes(term)) {
+            score++;
+          }
+        });
+        return score ** 2; // Squaring to emphasize matches
+      }
+
+      function knn(queryTerms, docTerms) {
+        return cosineSimilarity(queryTerms, docTerms); // Using cosine similarity as a proxy for simplicity
+      }
+
+      function createTermFrequencyVector(terms) {
+        const termFrequency = {};
+        terms.forEach((term) => {
+          termFrequency[term] = (termFrequency[term] || 0) + 1;
+        });
+        return termFrequency;
+      }
+
+      function dotProductVectors(vector1, vector2) {
+        let dotProduct = 0;
+        for (const term in vector1) {
+          if (term in vector2) {
+            dotProduct += vector1[term] * vector2[term];
+          }
+        }
+        return dotProduct;
+      }
+
+      function vectorMagnitude(vector) {
+        let magnitude = 0;
+        for (const term in vector) {
+          magnitude += vector[term] ** 2;
+        }
+        return Math.sqrt(magnitude);
+      }
+    </script>
+  </body>
+</html>
