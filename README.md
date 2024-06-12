@@ -10,4 +10,17 @@ algoritma yang digunakan :
 - KNN
 
 how to run
+- Buat virtual environment:
+$ python3 -m venv myenv
+
+- Aktifkan virtual environment:
+$ source myenv/bin/activate
+
+- Instal Flask:
+$ pip install Flask
+
+- Install pandas
+$ pip install pandas
+
+- Jalankan Aplikasi Flask
 $ python app.py
