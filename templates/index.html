@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tahu Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <h1>Tahu Search</h1>
+    <h2>With Various Algorithms</h2>
+    <form id="searchForm">
+      <input type="text" id="keyword" name="keyword" placeholder="Enter Keyword" />
+      <select id="algorithm">
+        <option value="vector-space">Vector Space Model</option>
+        <option value="cosine-similarity">Cosine Similarity</option>
+        <option value="naive-bayes">Naive Bayes</option>
+        <option value="extended-boolean">Extended Boolean</option>
+        <option value="knn">K-Nearest Neighbors (KNN)</option>
+      </select>
+      <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+      document.getElementById('searchForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const keyword = document.getElementById('keyword').value.toLowerCase();
+        const algorithm = document.getElementById('algorithm').value;
+
+        fetch('/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ keyword: keyword, algorithm: algorithm })
+        })
+          .then(response => response.json())
+          .then(data => displayResults(data))
+          .catch(error => console.error('Error:', error));
+      });
+
+      function displayResults(results) {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        if (results.length === 0) {
+          resultsDiv.innerHTML = '<p>No results found</p>';
+          return;
+        }
+
+        results.forEach(result => {
+          const resultItem = document.createElement('div');
+          resultItem.innerHTML = `<p>${result.doc} (Score: ${result.score})</p>`;
+          resultsDiv.appendChild(resultItem);
+        });
+      }
+    </script>
+  </body>
+</html>

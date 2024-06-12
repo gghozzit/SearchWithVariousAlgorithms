@@ -8,3 +8,6 @@ algoritma yang digunakan :
 - Extended Boolean
 - Naive Bayes
 - KNN
+
+how to run
+$ python app.py
